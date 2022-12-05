@@ -1,18 +1,14 @@
 from aiogram import types, Dispatcher
 import requests
 from environs import Env
+from tgbot.handlers.coordinates import get_coordinates
 
 env = Env()
 env.read_env(".env")
 
 
-def get_coords():
-    lat, lon = 55.75, 37.62
-    return lat, lon
-
-
-def get_api_path():
-    lat, lon = get_coords()
+def get_wt_api_path(location):
+    lat, lon = get_coordinates(location)
     api_key = env.str("WT_API_KEY")
     api_host = env.str("WT_API_HOST")
     api_params = f"units=metric&lat={lat}&lon={lon}&appid={api_key}"
@@ -21,16 +17,17 @@ def get_api_path():
 
 
 async def get_weather(message: types.Message):
-    api_path = get_api_path()
+    location = message.text
+    api_path = get_wt_api_path(location)
     response = requests.get(api_path)
     wt_json = response.json()
-    city = wt_json["name"]
     temp = wt_json["main"]["temp"]
     feels = wt_json["main"]["feels_like"]
-    msg = f"Температура в {city} равна {temp}°C.\n"
+    msg = f"Температура в {location} - {temp}°C.\n"
     msg += f"Ощущается как {feels}°C."
     await message.answer(msg)
 
 
 def register_weather(dp: Dispatcher):
-    dp.register_message_handler(get_weather, commands=["weather"], state="*")
+    dp.register_message_handler(get_weather)
+    #dp.register_message_handler(get_weather, commands=["weather"], state="*")
