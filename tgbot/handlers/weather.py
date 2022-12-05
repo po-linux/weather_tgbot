@@ -1,6 +1,6 @@
-from aiogram import types, Dispatcher
 import requests
 from environs import Env
+from aiogram import types, Dispatcher
 from tgbot.handlers.coordinates import get_coordinates
 
 env = Env()
