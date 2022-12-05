@@ -7,20 +7,22 @@ env = Env()
 env.read_env(".env")
 
 
-def get_crd_api_path(location):
+def get_crd_api_url(location):
     api_key = env.str("GEO_API_KEY")
     api_host = env.str("GEO_API_HOST")
     api_params = f"apikey={api_key}&format=json&geocode={location}"
-    api_path = api_host + "?" + api_params
-    return api_path
+    # https://geocode-maps.yandex.ru/1.x/?apikey=ваш API-ключ&format=json&geocode=Тверская+6 - порядок параметров не важен
+    api_url = api_host + "?" + api_params
+    return api_url
 
 
 def get_coordinates(location):
-    api_path = get_crd_api_path(location)
-    response = requests.get(api_path)
+    api_url = get_crd_api_url(location)
+    response = requests.get(api_url)
     crd_json = response.json()
-    geobj = crd_json["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
-    lon, lat = geobj["Point"]["pos"].split(' ')
-    return lat, lon
-
-# https://geocode-maps.yandex.ru/1.x/?apikey=ваш API-ключ&format=json&geocode=Тверская+6 - порядок параметров не важен
+    try:
+        geobj = crd_json["response"]["GeoObjectCollection"]["featureMember"][0]
+        coordinates = geobj["GeoObject"]["Point"]["pos"]
+    except:
+        coordinates = False
+    return coordinates
