@@ -2,9 +2,13 @@
 import requests
 from environs import Env
 
+from aiogram import types, Dispatcher
+from tgbot.keyboards import inline
 
 env = Env()
 env.read_env(".env")
+
+location = "Москва"
 
 
 def get_crd_api_url(location):
@@ -26,3 +30,21 @@ def get_coordinates(location):
     except:
         coordinates = False
     return coordinates
+
+
+# эта функция нужна, чтобы из других модулей получить значение location
+def get_location():
+    global location
+    return location
+
+
+# чтобы установить новые значения для переменной location
+async def set_location(message: types.Message):
+    global location
+    location = message.text
+    msg = f"Установлена новая локация: {location}"
+    await message.answer(msg, reply_markup=inline.WEATHER)
+
+
+def register_location(dp: Dispatcher):
+    dp.register_message_handler(set_location, content_types=types.ContentTypes.TEXT, state="*")

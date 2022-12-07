@@ -9,6 +9,7 @@ from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.admin import register_admin
 from tgbot.handlers.flip import register_flip
+from tgbot.handlers.coordinates import register_location
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
 from tgbot.handlers.weather_commands import register_weather
@@ -30,6 +31,7 @@ def register_all_handlers(dp):
     register_user(dp)
     register_flip(dp)
     register_weather(dp)
+    register_location(dp)
     register_echo(dp)
 
 
