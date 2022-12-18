@@ -3,7 +3,7 @@ from environs import Env
 from enum import IntEnum
 from datetime import datetime
 
-from tgbot.handlers.coordinates import get_coordinates
+from tgbot.handlers.location import get_coordinates
 
 
 env = Env()
@@ -52,7 +52,7 @@ def get_temperature(location):
     temp = wt_json["main"]["temp"]
     feels = wt_json["main"]["feels_like"]
 
-    msg = f"Температура в {location} на данный момент составляет {temp}°C.\n"
+    msg = f"Температура на данный момент составляет {temp}°C.\n"
     msg += f"Ощущается как {feels}°C."
     return msg
 
